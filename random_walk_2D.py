@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Developer: Xianglin Wu (xianglin3092@gmail.com)
 import numpy as np
 from numpy import linalg as la
 import matplotlib.pyplot as plt
@@ -283,7 +284,7 @@ class TWO_D_RANDOM_WALK:
         self.save_image(save, inputtime=output_time, filename=filename, savetype=savetype)
 
     def export_several_image(self, start_time, end_time, save=False, filename=None, savetype=None):
-        for time in range(start_time, end_time):
+        for time in range(start_time, end_time+1):
             X, Y = np.meshgrid(self.xx, self.yy)
             
             c_prob = self.classical_p(time)
@@ -330,7 +331,7 @@ class TWO_D_RANDOM_WALK:
             else:
                 if filename:
                     if savetype:
-                        plt.savefig(filename, bbox_inches='tight', pad_inches=0, format=savetype)
+                        plt.savefig(filename + '.' + savetype, bbox_inches='tight', pad_inches=0, format=savetype)
                     else:
                         plt.savefig(filename + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
                 else:
@@ -374,7 +375,7 @@ if __name__ == '__main__':
     print(test.quantum_prob)
 
     ## export an image
-    test.export_one_image(output_time=15, save=True, filename='hola', savetype='png')
+    # test.export_one_image(output_time=15, save=True, filename='hola', savetype='png')
 
     ## export several images
-    # test.export_several_image(start_time=1, end_time=15, save=True, filename='report', savetype='jpg')
+    test.export_several_image(start_time=1, end_time=15, save=True, filename='report', savetype='jpg')
