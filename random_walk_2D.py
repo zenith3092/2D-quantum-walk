@@ -317,7 +317,7 @@ class TWO_D_RANDOM_WALK:
         ax2.text2D(1.125, 0.05, "t="+str(output_time), fontsize=50, transform=ax.transAxes)
         ax2.set_zlim(0, 0.05)
         plt.tight_layout()
-        self.save_image(save, inputtime=output_time, filename=filename)
+        self.save_image(save, input_time=output_time, filename=filename)
         if show:
             plt.show()
 
@@ -360,24 +360,24 @@ class TWO_D_RANDOM_WALK:
             ax2.text2D(1.125, 0.05, "t=" + str(time/10), fontsize=50, transform=ax.transAxes)
             ax2.set_zlim(0, 0.05)
             plt.tight_layout()
-            self.save_image(save, inputtime=time, filename=filename)
+            self.save_image(save, input_time=time, filename=filename)
         if show:
                 plt.show()
     
-    def save_image(self, save, inputtime, filename):
+    def save_image(self, save, input_time, filename):
         '''
         Save images.
         Input:
           save: bool
-          inputtime: int
+          input_time: int
           filename: str
         '''
         if save:
-            if inputtime:
+            if input_time:
                 if filename:
-                    plt.savefig(filename + str(inputtime) + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
+                    plt.savefig(filename + str(input_time) + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
                 else:
-                    plt.savefig('output' + str(inputtime) + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
+                    plt.savefig('output' + str(input_time) + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
             else:
                 if filename:
                     plt.savefig(filename + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
