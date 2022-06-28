@@ -18,6 +18,9 @@ class TWO_D_RANDOM_WALK:
         self.yy = np.linspace(1, self.length, self.length)
     
     def limited_boundary_matrix(self):
+        '''
+        Create a liouvulle matrix with a limited boundary condition.
+        '''
         for item in range(self.size):
             if (item % self.length == 0) and (item - self.length < 0):
                 for juice in range(self.size):
@@ -105,6 +108,9 @@ class TWO_D_RANDOM_WALK:
                         self.matrix[item][juice] = -1
 
     def periodic_boundary_matrix(self):
+        '''
+        Create a liouvulle matrix with a periodic boundary condition.
+        '''
         for item in range(self.size):
             if (item % self.length == 0) and (item - self.length < 0):
                 for juice in range(self.size):
@@ -216,6 +222,9 @@ class TWO_D_RANDOM_WALK:
                         self.matrix[item][juice] = -1
     
     def generate_eig(self):
+        '''
+        Calculate the eigenvalues and the eigenvectors of the liouville matrix.
+        '''
         eigenvalues, eigenvectors = la.eig(self.matrix)
         eigenvalues = np.array([eigenvalues])
         eigenvalues = eigenvalues.T
@@ -225,12 +234,24 @@ class TWO_D_RANDOM_WALK:
         self.eigenvectors = eigenvectors_T
     
     def generate_coefficients(self, p_0):
+        '''
+        Calculate the coefficients of linear combination for the eigenvectors of the liouville matrix
+        Input:
+          p_0: numpy.array
+        '''
         _coe = np.zeros((self.size, 1))
         for item in range(self.size):
             _coe[item] = np.array([self.eigenvectors[item]]) @ p_0
         self.coefficients = _coe
 
     def classical_p(self, t):
+        '''
+        Calculate the probability at the certain time on the basis of classical physics.
+        Input:
+          t: int
+        Output:
+          c_p: numpy.array
+        '''
         prob = np.zeros((1, self.size))
         for item in range(self.size):
             prob = prob + self.coefficients[item][0] * np.exp(-1 * self.eigenvalues[item][0] * t) * self.eigenvectors[item]
@@ -241,6 +262,13 @@ class TWO_D_RANDOM_WALK:
         return c_p
     
     def quantum_p(self, t):
+        '''
+        Calculate the probability at the certain time on the basis of quantum physics.
+        Input:
+          t: int
+        Output:
+          q_p: numpy.array
+        '''
         prob_amplitude = np.zeros((1, self.size))
         prob = np.zeros((1, self.size))
         for item in range(self.size):
@@ -252,7 +280,15 @@ class TWO_D_RANDOM_WALK:
         self.quantum_prob = q_p
         return q_p
     
-    def export_one_image(self, output_time, save=False, filename=None, savetype=None):
+    def export_one_image(self, output_time, show=False, save=False, filename=None):
+        '''
+        Export an image at a certain time.
+        Input:
+          output_time: int
+          show: bool
+          save: bool
+          filename: str
+        '''
         X, Y = np.meshgrid(self.xx, self.yy)
 
         c_prob = self.classical_p(output_time)
@@ -281,9 +317,20 @@ class TWO_D_RANDOM_WALK:
         ax2.text2D(1.125, 0.05, "t="+str(output_time), fontsize=50, transform=ax.transAxes)
         ax2.set_zlim(0, 0.05)
         plt.tight_layout()
-        self.save_image(save, inputtime=output_time, filename=filename, savetype=savetype)
+        self.save_image(save, inputtime=output_time, filename=filename)
+        if show:
+            plt.show()
 
-    def export_several_image(self, start_time, end_time, save=False, filename=None, savetype=None):
+    def export_several_image(self, start_time, end_time, show=False, save=False, filename=None):
+        '''
+        Export several images for a certain time range.
+        Input:
+          start_time: int
+          end_time: int
+          show: bool
+          save: bool
+          filename: str
+        '''
         for time in range(start_time, end_time+1):
             X, Y = np.meshgrid(self.xx, self.yy)
             
@@ -313,69 +360,67 @@ class TWO_D_RANDOM_WALK:
             ax2.text2D(1.125, 0.05, "t=" + str(time/10), fontsize=50, transform=ax.transAxes)
             ax2.set_zlim(0, 0.05)
             plt.tight_layout()
-            self.save_image(save, inputtime=time, filename=filename, savetype=savetype)
+            self.save_image(save, inputtime=time, filename=filename)
+        if show:
+                plt.show()
     
-    def save_image(self, save, inputtime, filename, savetype):
+    def save_image(self, save, inputtime, filename):
+        '''
+        Save images.
+        Input:
+          save: bool
+          inputtime: int
+          filename: str
+        '''
         if save:
             if inputtime:
                 if filename:
-                    if savetype:
-                        plt.savefig(filename + str(inputtime) + '.' + savetype, bbox_inches='tight', pad_inches=0, format=savetype)
-                    else:
-                        plt.savefig(filename + str(inputtime) + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
+                    plt.savefig(filename + str(inputtime) + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
                 else:
-                    if savetype:
-                        plt.savefig('output' + str(inputtime) + '.' + savetype, bbox_inches='tight', pad_inches=0, format=savetype)
-                    else:
-                        plt.savefig('output' + str(inputtime) + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
+                    plt.savefig('output' + str(inputtime) + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
             else:
                 if filename:
-                    if savetype:
-                        plt.savefig(filename + '.' + savetype, bbox_inches='tight', pad_inches=0, format=savetype)
-                    else:
-                        plt.savefig(filename + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
+                    plt.savefig(filename + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
                 else:
-                    if savetype:
-                        plt.savefig('output' + '.' + savetype, bbox_inches='tight', pad_inches=0, format=savetype)
-                    else:
-                        plt.savefig('output' + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
+                    plt.savefig('output' + '.jpg', bbox_inches='tight', pad_inches=0, format='jpg')
 
 if __name__ == '__main__':
     ## define length by length lattice 
     length = 64
-    size = length**2
+    matrix_size = length**2
     
     ## define initial state
-    p_0 = np.zeros((size, 1))
+    p_0 = np.zeros((matrix_size, 1))
     p_0[0] = 1.
 
     ## add an object
     test = TWO_D_RANDOM_WALK(length)
     
     ## define a matrix with boundary conditions
+    ### choose a boundary condition
     test.limited_boundary_matrix()
     # test.periodic_boundary_matrix()
-    print(test.matrix)
+    print('\nliouville matrix:\n\n',test.matrix)
 
     ## calculate eigenvalues and eigenvectors
     test.generate_eig()
-    print(test.eigenvalues)
-    print(test.eigenvectors)
+    print('\neigenvalues:\n\n', test.eigenvalues)
+    print('\neigenvectors:\n\n', test.eigenvectors)
 
     ## calculate coefficients
     test.generate_coefficients(p_0)
-    print(test.coefficients)
+    print('\ncoefficients:\n\n', test.coefficients)
 
     ## calculate probability in classical physics
     test.classical_p(15)  
-    print(test.classical_prob)
+    print('\nclassical probability:\n\n', test.classical_prob)
 
     ## calculate probability in classical physics
     test.quantum_p(15)  
-    print(test.quantum_prob)
+    print('\nquantum probability:\n\n', test.quantum_prob)
 
     ## export an image
-    # test.export_one_image(output_time=15, save=True, filename='hola', savetype='png')
+    test.export_one_image(output_time=15, show=True, save=True, filename='report')
 
     ## export several images
-    test.export_several_image(start_time=1, end_time=15, save=True, filename='report', savetype='jpg')
+    # test.export_several_image(start_time=5, end_time=7, show=True, save=True, filename='report')
